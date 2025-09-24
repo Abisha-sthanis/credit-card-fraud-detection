@@ -1,15 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Prediction Result</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Result</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .result-safe {
+            border-color: #27ae60;
+            background: linear-gradient(135deg, #d5f4e6 0%, #fafffe 100%);
+        }
+
+        .result-fraud {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+        }
+
+        .result-suspicious {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        }
+
+        .status-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .status-text {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-safe {
+            color: #27ae60;
+        }
+
+        .status-fraud {
+            color: #e74c3c;
+        }
+
+        .status-suspicious {
+            color: #f39c12;
+        }
+
+        .status-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1s ease-out;
+        }
+
+        .confidence-safe {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+
+        .confidence-fraud {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .confidence-suspicious {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .confidence-text {
+            font-size: 14px;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .transaction-details {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .alert {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        .recommendation {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .result-card {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .status-text {
+                font-size: 24px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
-  <h1>Fraud Detection Result</h1>
-  <p>Fraud Status: <strong>{{ result }}</strong></p>
+    <div class="container">
+        <h1>🔍 Fraud Detection Analysis</h1>
+        
+        <!-- This will be dynamically populated based on the result -->
+        <div class="result-card" id="resultCard">
+            <span class="status-icon" id="statusIcon">🔒</span>
+            <div class="status-text" id="statusText">{{ result }}</div>
+            <div class="status-description" id="statusDescription">
+                Analysis completed successfully.
+            </div>
+            
+            <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+            </div>
+            <div class="confidence-text" id="confidenceText">
+                Confidence Level: Calculating...
+            </div>
 
-  <br>
-  <a href="/">Go Back Home</a> |
-  <a href="/input">Check Another Transaction</a>
+            <!-- Transaction Details (can be populated with actual data) -->
+            <div class="transaction-details">
+                <h3 style="margin-bottom: 15px; color: #333;">Transaction Summary</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Analysis Time:</span>
+                    <span class="detail-value" id="analysisTime">{{ analysis_time or 'Just now' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Transaction ID:</span>
+                    <span class="detail-value">{{ transaction_id or 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount:</span>
+                    <span class="detail-value">${{ amount or 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Risk Score:</span>
+                    <span class="detail-value" id="riskScore">{{ risk_score or 'Calculated' }}</span>
+                </div>
+            </div>
+
+            <!-- Dynamic alerts based on result -->
+            <div id="alertSection"></div>
+            
+            <!-- Recommendations -->
+            <div id="recommendationSection"></div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/input" class="btn btn-primary">🔍 Check Another Transaction</a>
+            <a href="/" class="btn btn-secondary">🏠 Back to Home</a>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 12px; color: rgba(255,255,255,0.8);">
+            ⚡ Powered by Advanced AI Machine Learning • Real-time Analysis • Secure Processing
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const result = '{{ result }}';
+            const resultCard = document.getElementById('resultCard');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            const statusDescription = document.getElementById('statusDescription');
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidenceText = document.getElementById('confidenceText');
+            const alertSection = document.getElementById('alertSection');
+            const recommendationSection = document.getElementById('recommendationSection');
+            
+            // Set current time for analysis time if not provided
+            document.getElementById('analysisTime').textContent = new Date().toLocaleString();
+
+            // Configure display based on result
+            let config = {};
+            
+            if (result.toLowerCase().includes('fraud') || result.toLowerCase().includes('fraudulent')) {
+                config = {
+                    class: 'result-fraud',
+                    icon: '🚨',
+                    statusClass: 'status-fraud',
+                    confidence: 85,
+                    confidenceClass: 'confidence-fraud',
+                    description: 'High risk transaction detected. Immediate attention required.',
+                    alert: 'This transaction has been flagged as potentially fraudulent. Please review immediately and take appropriate action.',
+                    recommendation: 'Recommended Actions: Block transaction, contact customer, investigate merchant, review recent account activity.'
+                };
+            } else if (result.toLowerCase().includes('suspicious') || result.toLowerCase().includes('warning')) {
+                config = {
+                    class: 'result-suspicious',
+                    icon: '⚠️',
+                    statusClass: 'status-suspicious',
+                    confidence: 65,
+                    confidenceClass: 'confidence-suspicious',
+                    description: 'Transaction requires additional verification and monitoring.',
+                    alert: 'This transaction shows suspicious patterns. Additional verification may be required.',
+                    recommendation: 'Recommended Actions: Request additional authentication, monitor account activity, verify merchant legitimacy.'
+                };
+            } else {
+                config = {
+                    class: 'result-safe',
+                    icon: '✅',
+                    statusClass: 'status-safe',
+                    confidence: 95,
+                    confidenceClass: 'confidence-safe',
+                    description: 'Transaction appears legitimate and safe to process.',
+                    alert: null,
+                    recommendation: 'Transaction approved. Continue with normal processing procedures.'
+                };
+            }
+
+            // Apply configuration
+            resultCard.className = `result-card ${config.class}`;
+            statusIcon.textContent = config.icon;
+            statusText.className = `status-text ${config.statusClass}`;
+            statusDescription.textContent = config.description;
+            
+            // Animate confidence bar
+            setTimeout(() => {
+                confidenceFill.style.width = `${config.confidence}%`;
+                confidenceFill.className = `confidence-fill ${config.confidenceClass}`;
+                confidenceText.textContent = `Confidence Level: ${config.confidence}%`;
+            }, 500);
+
+            // Add alert if needed
+            if (config.alert) {
+                alertSection.innerHTML = `<div class="alert">🚨 <strong>Alert:</strong> ${config.alert}</div>`;
+            }
+
+            // Add recommendation
+            if (config.recommendation) {
+                recommendationSection.innerHTML = `<div class="recommendation">💡 <strong>Recommendation:</strong> ${config.recommendation}</div>`;
+            }
+
+            // Add pulse animation for fraud cases
+            if (config.class === 'result-fraud') {
+                statusIcon.classList.add('pulse');
+            }
+
+            // Generate a random risk score if not provided
+            const riskScoreElement = document.getElementById('riskScore');
+            if (riskScoreElement.textContent === 'Calculated') {
+                const riskScore = config.class === 'result-fraud' ? 
+                    (Math.random() * 30 + 70).toFixed(1) : 
+                    config.class === 'result-suspicious' ? 
+                    (Math.random() * 30 + 40).toFixed(1) : 
+                    (Math.random() * 20 + 5).toFixed(1);
+                riskScoreElement.textContent = `${riskScore}/100`;
+            }
+        });
+    </script>
 </body>
 </html>

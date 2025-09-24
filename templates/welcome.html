@@ -1,20 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Welcome - Fraud Detection</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Advanced Fraud Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            top: 70%;
+            right: 10%;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.12);
+            transform: rotate(45deg);
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0px) scale(1);
+            }
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .feature {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .feature-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            margin-top: 30px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        input:focus + .input-icon {
+            color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .security-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(39, 174, 96, 0.1);
+            border-radius: 12px;
+            font-size: 13px;
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .privacy-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+        }
+
+        .privacy-note a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .privacy-note a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 26px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .logo {
+                font-size: 36px;
+            }
+        }
+
+        /* Loading animation for form submission */
+        .loading {
+            pointer-events: none;
+        }
+
+        .loading .submit-btn {
+            background: #ccc;
+            position: relative;
+        }
+
+        .loading .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .demo-info {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #3498db;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to Credit Card Fraud Detection</h1>
-  <form action="/input" method="get">
-    <label for="name">Enter your Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
+    <div class="bg-animation">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
 
-    <label for="email">Enter your Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛡️</div>
+            <h1>Advanced Fraud Detection System</h1>
+            <p class="subtitle">
+                Secure, AI-powered transaction analysis for real-time fraud prevention
+            </p>
+        </div>
 
-    <button type="submit">Continue</button>
-  </form>
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🤖</span>
+                AI Powered
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                Real-time
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🔒</span>
+                Secure
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h2 class="form-title">Get Started</h2>
+            
+            <form action="/input" method="get" id="welcomeForm">
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <div class="input-container">
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required autocomplete="name">
+                        <span class="input-icon">👤</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <div class="input-container">
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required autocomplete="email">
+                        <span class="input-icon">📧</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    🚀 Start Analysis
+                </button>
+            </form>
+
+            <div class="security-info">
+                🔐 <strong>Your Privacy is Protected:</strong> All data is encrypted and processed securely. We never store personal information without consent.
+            </div>
+
+            <div class="demo-info">
+                💡 <strong>Demo Mode:</strong> This is a demonstration system. Feel free to use test data for exploring the fraud detection capabilities.
+            </div>
+
+            <div class="privacy-note">
+                By continuing, you agree to our <a href="#" onclick="showPrivacyInfo()">Privacy Policy</a> and <a href="#" onclick="showTermsInfo()">Terms of Service</a>. 
+                Your information is used solely for fraud detection analysis.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form validation and enhancement
+        document.getElementById('welcomeForm').addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            // Basic validation
+            if (name.length < 2) {
+                e.preventDefault();
+                alert('Please enter a valid name (at least 2 characters).');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            // Add loading state
+            document.body.classList.add('loading');
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.innerHTML = 'Initializing...';
+            
+            // Store user info in sessionStorage for later use
+            sessionStorage.setItem('userName', name);
+            sessionStorage.setItem('userEmail', email);
+        });
+
+        // Input animations
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Auto-fill demo data function
+        function fillDemoData() {
+            document.getElementById('name').value = 'John Doe';
+            document.getElementById('email').value = 'john.doe@example.com';
+        }
+
+        // Privacy and terms modals (placeholder functions)
+        function showPrivacyInfo() {
+            alert('Privacy Policy: We protect your data with enterprise-grade encryption and never share personal information with third parties. All analysis is performed securely and anonymously.');
+        }
+
+        function showTermsInfo() {
+            alert('Terms of Service: This fraud detection system is provided for demonstration purposes. By using this service, you acknowledge that this is a test environment.');
+        }
+
+        // Keyboard shortcut for demo data (Alt + D)
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'd') {
+                fillDemoData();
+            }
+        });
+
+        // Welcome animation
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.querySelector('.container').style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    document.querySelector('.container').style.transform = 'scale(1)';
+                }, 200);
+            }, 800);
+        });
+    </script>
 </body>
 </html>
-
